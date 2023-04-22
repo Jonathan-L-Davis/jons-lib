@@ -72,8 +72,14 @@ hyper_complex<dimension> operator * ( const hyper_complex<dimension>& A, const h
     //cayley dickson construction/extension of the reals
     hyper_complex<dimension> retMe{};
     if constexpr ( dimension != 1){
-        hyper_complex<(dimension>>1)> lower_part = (A.lower()*B.lower()-B.upper()*A.upper().conj());
-        hyper_complex<(dimension>>1)> upper_part = (A.lower().conj()*B.upper()+B.lower()*A.upper());
+
+        hyper_complex<(dimension>>1)> a = A.lower();
+        hyper_complex<(dimension>>1)> b = A.upper();
+        hyper_complex<(dimension>>1)> c = B.lower();
+        hyper_complex<(dimension>>1)> d = B.upper();
+
+        hyper_complex<(dimension>>1)> lower_part = (a*c-d.conj()*b);
+        hyper_complex<(dimension>>1)> upper_part = (d*a+b*c.conj());
         for( int i = 0; i < dimension>>1; i++)
             retMe.raw_values[i] = lower_part.raw_values[i];
         for( int i = 0; i < dimension>>1; i++)
