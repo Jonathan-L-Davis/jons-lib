@@ -9,22 +9,33 @@ struct hex_ring{
 
     hex_ring(){
         bufferStart = nullptr;
-        _capacity = 0;
-
-        startPos = 0;
-        _size = 0;
+        _layers = 0;
     }
 
     hex_ring(uint32_t layers){
 
-        unsigned int size = 3*(layers*layers+layers)+1;
+        //layers--;//0
+        if( layers != 0){
+            unsigned int size = 3*(layers*layers+layers)+1;
 
-        bufferStart = new T[size];
-        _capacity = size;
+            bufferStart = new T[size];
+            _layers = layers;
+            return;
+        }
+        _layers = 0;
+        bufferStart = nullptr;
     }
 
     ~hex_ring(){
-        delete[] bufferStart;//only free bufferStart since it points to the entire raw buffer
+        delete[] bufferStart;
+    }
+
+    T* operator [] ( unsigned int layer){
+
+        unsigned int lower_layer = layer - 1;
+        if( layer == 0 )
+            return bufferStart;
+        return bufferStart+(3*(lower_layer*lower_layer+lower_layer)+1);
     }
 
     T& at( unsigned int layer, unsigned int position ){
@@ -37,8 +48,8 @@ struct hex_ring{
         signed int lower_layer = layer-1;
         unsigned int cell = 3*(lower_layer*lower_layer+lower_layer)+position;
 
-        if( cell < _capacity && cell >= 0 ){
-            return bufferStart[startPos+cell];
+        if( cell < _layers && cell >= 0 ){
+            return bufferStart[position+cell];
         }
         else
         {
@@ -47,20 +58,64 @@ struct hex_ring{
     }
 
     unsigned int size(){
-        return _size;
+        uint32_t layers = _layers-1;
+        return _layers?(3*(layers*layers+layers)+1):0;
+    }
+
+    unsigned int layers(){
+        return _layers;
+    }
+
+    unsigned int layer_size( unsigned int layer){
+        if( layer > _layers )
+            return 0;
+        return (layer)?6*(layer):1;
+    }
+
+    void resize(unsigned int new_layers){
+
+        if( new_layers == 0 ){
+            _layers = 0;
+            delete[] bufferStart;
+            bufferStart = nullptr;
+            return;
+        }
+
+        if( new_layers == _layers )//same size, do nothing
+        {
+            return;
+        }
+
+        new_layers--;
+
+        T* nwBuffer = new T[3*(new_layers*new_layers+new_layers)+1];
+
+        //std::cout << new_layers << "\n";
+        //std::cout << 3*(new_layers*new_layers+new_layers)+1 << "\n";
+
+        if( bufferStart == nullptr ){
+            bufferStart = nwBuffer;
+            _layers = new_layers+1;
+            return;
+        }
+
+        if( new_layers > _layers )//grow
+        {
+            std::memcpy( nwBuffer, bufferStart, (3*(_layers*_layers+_layers)+1)*sizeof(T) );
+        }
+        else//shrink
+        {
+            std::memcpy( nwBuffer, bufferStart, (3*(new_layers*new_layers+new_layers)+1)*sizeof(T) );
+        }
+
+        delete[] bufferStart;
+        bufferStart = nwBuffer;
+        _layers = new_layers+1;
+
     }
 
     T *bufferStart;//contiguous mem start
-    uint32_t _capacity;
-    uint32_t _size;
-    uint32_t startPos;
-
-    T* operator [] ( unsigned int layer){
-
-        unsigned int lower_layer = layer - 1;
-
-        return bufferStart+3*(lower_layer*lower_layer+lower_layer);
-    }
+    uint32_t _layers;
 
 };
 
