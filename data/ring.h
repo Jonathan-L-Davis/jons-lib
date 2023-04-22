@@ -147,6 +147,7 @@ struct ring{
             startPos -= _capacity;
     }
 
+    private:
     T *bufferStart;//contiguous mem start
     uint32_t _capacity;
     uint32_t _size;

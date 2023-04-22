@@ -14,7 +14,6 @@ struct hex_ring{
 
     hex_ring(uint32_t layers){
 
-        //layers--;//0
         if( layers != 0){
             unsigned int size = 3*(layers*layers+layers)+1;
 
@@ -90,9 +89,6 @@ struct hex_ring{
 
         T* nwBuffer = new T[3*(new_layers*new_layers+new_layers)+1];
 
-        //std::cout << new_layers << "\n";
-        //std::cout << 3*(new_layers*new_layers+new_layers)+1 << "\n";
-
         if( bufferStart == nullptr ){
             bufferStart = nwBuffer;
             _layers = new_layers+1;
@@ -114,7 +110,8 @@ struct hex_ring{
 
     }
 
-    T *bufferStart;//contiguous mem start
+    private:
+    T *bufferStart;
     uint32_t _layers;
 
 };
