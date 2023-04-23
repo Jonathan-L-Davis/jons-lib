@@ -1,18 +1,18 @@
-#ifndef HEX_RING_H
-#define HEX_RING_H
+#ifndef HEX_VEC_H
+#define HEX_VEC_H
 
 #include <cstring>
 #include <stdexcept>
 
 template<typename T>
-struct hex_ring{
+struct hex_vec{
 
-    hex_ring(){
+    hex_vec(){
         bufferStart = nullptr;
         _layers = 0;
     }
 
-    hex_ring(uint32_t layers){
+    hex_vec(uint32_t layers){
 
         if( layers != 0){
             unsigned int size = 3*(layers*layers+layers)+1;
@@ -25,7 +25,7 @@ struct hex_ring{
         bufferStart = nullptr;
     }
 
-    ~hex_ring(){
+    ~hex_vec(){
         delete[] bufferStart;
     }
 
@@ -116,4 +116,4 @@ struct hex_ring{
 
 };
 
-#endif//HEX_RING_H
+#endif//HEX_VEC_H

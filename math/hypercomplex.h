@@ -4,7 +4,10 @@
 #include <cstdint>
 #include <iostream>
 
-template <uint16_t dim>
+//template <uint16_t dim>
+//struct hyper_complex;
+
+template <typename T, uint16_t dim>
 struct hyper_complex;
 
 typedef hyper_complex<1> real;
@@ -13,7 +16,7 @@ typedef hyper_complex<4> quaternion;
 typedef hyper_complex<8> octonion;
 typedef hyper_complex<16> sedenion;
 
-template< uint16_t dimension >
+template< typename T, uint16_t dimension >
 struct hyper_complex {
     static_assert( dimension == 1 || dimension == 2 || dimension == 4 || dimension == 8 || dimension == 16 || dimension == 32 || dimension == 64 || dimension == 128 || dimension == 256 , "Dimension Invalid or greater than 256");
     float raw_values[dimension];
@@ -96,6 +99,24 @@ hyper_complex<dimension> operator * ( const hyper_complex<dimension>& A, const h
         return retMe;
     }
 
+}
+
+template< uint16_t dimension >
+hyper_complex<dimension> operator * ( const hyper_complex<dimension>& A, float B ){
+    hyper_complex<dimension> retMe;
+    for( auto i = 0; i < dimension; i++){
+        retMe.raw_values[i] = A.raw_values[i]*B;
+    }
+    return retMe;
+}
+
+template< uint16_t dimension >
+hyper_complex<dimension> operator * ( float A, const hyper_complex<dimension>& B ){
+    hyper_complex<dimension> retMe;
+    for( auto i = 0; i < dimension; i++){
+        retMe.raw_values[i] = B.raw_values[i]*A;
+    }
+    return retMe;
 }
 
 #endif//hyper_complex_H
