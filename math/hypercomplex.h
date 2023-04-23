@@ -4,6 +4,15 @@
 #include <cstdint>
 #include <iostream>
 
+template <uint16_t dim>
+struct hyper_complex;
+
+typedef hyper_complex<1> real;
+typedef hyper_complex<2> complex;
+typedef hyper_complex<4> quaternion;
+typedef hyper_complex<8> octonion;
+typedef hyper_complex<16> sedenion;
+
 template< uint16_t dimension >
 struct hyper_complex {
     static_assert( dimension == 1 || dimension == 2 || dimension == 4 || dimension == 8 || dimension == 16 || dimension == 32 || dimension == 64 || dimension == 128 || dimension == 256 , "Dimension Invalid or greater than 256");
@@ -65,13 +74,11 @@ hyper_complex<dimension> operator - ( const hyper_complex<dimension>& A, const h
 template< uint16_t dimension >
 hyper_complex<dimension> operator * ( const hyper_complex<dimension>& A, const hyper_complex<dimension>& B ){
 
-    if( dimension == 1 ){
+    if constexpr ( dimension == 1 ){
         return hyper_complex<dimension>{A.raw_values[0]*B.raw_values[0]};
     }
-
-    //cayley dickson construction/extension of the reals
-    hyper_complex<dimension> retMe{};
-    if constexpr ( dimension != 1){
+    else{
+        hyper_complex<dimension> retMe{};
 
         hyper_complex<(dimension>>1)> a = A.lower();
         hyper_complex<(dimension>>1)> b = A.upper();
@@ -80,12 +87,14 @@ hyper_complex<dimension> operator * ( const hyper_complex<dimension>& A, const h
 
         hyper_complex<(dimension>>1)> lower_part = (a*c-d.conj()*b);
         hyper_complex<(dimension>>1)> upper_part = (d*a+b*c.conj());
+
         for( int i = 0; i < dimension>>1; i++)
             retMe.raw_values[i] = lower_part.raw_values[i];
         for( int i = 0; i < dimension>>1; i++)
             retMe.raw_values[i+(dimension>>1)] = upper_part.raw_values[i];
+
+        return retMe;
     }
-    return retMe;
 
 }
 
