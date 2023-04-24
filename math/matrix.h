@@ -47,6 +47,7 @@ matrix<T,X,Y> operator - ( const matrix<T,X,Y>& A ){
     return retMe;
 }
 
+//addition element wise
 template <typename T, uint64_t X, uint64_t Y>
 matrix<T,X,Y> operator + ( const matrix<T,X,Y>& A, const matrix<T,X,Y>& B ){
 
@@ -59,6 +60,7 @@ matrix<T,X,Y> operator + ( const matrix<T,X,Y>& A, const matrix<T,X,Y>& B ){
     return retMe;
 }
 
+// subtraction element wise
 template <typename T, uint64_t X, uint64_t Y>
 matrix<T,X,Y> operator - ( const matrix<T,X,Y>& A, const matrix<T,X,Y>& B ){
 
@@ -87,7 +89,7 @@ matrix<T,X,Z> operator * ( matrix<T,X,Y> A, matrix<T,Y,Z> B ){
     for( decltype(X) x = 0; x < X; x++ ){
         for( decltype(Z) z = 0; z < Z; z++ ){
             for( decltype(Y) y = 0; y < Y; y++ ){
-                static_assert( (has_plus_and_eq || has_plus_eq) , "type does support addition" );
+                static_assert( (has_plus_and_eq || has_plus_eq) , "type does not support addition" );
                 if constexpr ( has_plus_eq )
                     retMe.raw_values[x][z] += A.raw_values[x][y]*B.raw_values[y][z];
                 else if constexpr ( has_plus_and_eq )
