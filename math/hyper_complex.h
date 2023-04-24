@@ -56,6 +56,7 @@ struct hyper_complex {
         else
             retMe.raw_values[0] = raw_values[0];// trivial conj case for real component
 
+        static_assert( requires(const T& t) { -t; }, "negation not supported");
         for( decltype(dimension) i = 1; i < dimension; i++)
             retMe.raw_values[i] = -raw_values[i];
         return retMe;
@@ -145,7 +146,7 @@ hyper_complex<T,dimension> operator * ( const hyper_complex<T,dimension>& A, con
 template< typename T, uint64_t dimension >
 hyper_complex<T,dimension> operator * ( const hyper_complex<T,dimension>& A, T B ){
     hyper_complex<T,dimension> retMe;
-    for( auto i = 0; i < dimension; i++){
+    for( decltype(dimension) i = 0; i < dimension; i++){
         retMe.raw_values[i] = A.raw_values[i]*B;
     }
     return retMe;
@@ -155,7 +156,7 @@ hyper_complex<T,dimension> operator * ( const hyper_complex<T,dimension>& A, T B
 template< typename T, uint64_t dimension >
 hyper_complex<T,dimension> operator * ( T A, const hyper_complex<T,dimension>& B ){
     hyper_complex<T,dimension> retMe;
-    for( auto i = 0; i < dimension; i++){
+    for( decltype(dimension) i = 0; i < dimension; i++){
         retMe.raw_values[i] = B.raw_values[i]*A;
     }
     return retMe;
