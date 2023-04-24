@@ -7,7 +7,7 @@
 #include <iostream>
 
 
-inline void crash(){ std::exit(0); }
+inline void crash(){ std::exit(0); }//default assert, exits safely
 inline std::map<uint64_t,void(*)(void)> callback_map = {{0,crash}};
 
 inline void runtime_assert(bool cond, std::string message, uint64_t channel){
@@ -23,7 +23,8 @@ inline void runtime_assert(bool cond, std::string message){
 }
 
 inline void runtime_assert_set_callback(uint64_t channel, void(*callback)(void) ){
-    callback_map[channel] = callback;//not thread safe, should change before use in multi-threads
+    if(channel)//don't overload default assert, but all else is okay
+        callback_map[channel] = callback;//not thread safe, should change before use in multi-threads
 }
 
 #endif//RUNTIME_ASSERT_H
